@@ -1,4 +1,4 @@
-Ext.define('parl.util.CurrencyField', {
+Ext.define('CurrencyField', {
   extend: 'Ext.form.field.Number',
   alias: 'widget.currencyfield',
   requires: ['Ext.util.KeyNav'],
