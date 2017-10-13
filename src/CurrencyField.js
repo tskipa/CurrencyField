@@ -7,10 +7,12 @@ Ext.define('CurrencyField', {
     displayField: 'text',
     valueField: 'text',
     currencyValue: null,
+    readOnlyPicker: false,
     triggers: {
       picker: {
         cls: 'trigger currency',
         handler: 'onTriggerClick',
+        hideOnReadOnly: false,
         weight: -1,
         scope: 'this'
       }
@@ -375,7 +377,7 @@ Ext.define('CurrencyField', {
 
   onTriggerClick: function(e) {
     var me = this;
-    if (!me.readOnly && !me.disabled) {
+    if (!me.readOnly && !me.disabled && !me.readOnlyPicker) {
       if (me.isExpanded) {
         me.collapse();
       } else {
