@@ -92,7 +92,8 @@ Ext.define('CurrencyField', {
   getStoreListeners: function(store) {
     if (!store.isEmptyStore) {
       var me = this;
-      me.setValueOnData();
+      var value = me.getCurrencyValue();
+      me.setValueOnData(value);
       var result = {
         load: me.onLoad
       };
@@ -117,16 +118,21 @@ Ext.define('CurrencyField', {
     me.mixins.storeholder.bindStore.call(me, store, initial);
     store = me.getStore();
     if (!initial && store && !store.isEmptyStore) {
-      me.setValueOnData();
+      var value = me.getCurrencyValue();
+      me.setValueOnData(value);
     }
   },
 
-  setValueOnData: function() {
+  setValueOnData: function(currencyValue) {
     var me = this;
     var store = me.getStore();
     if (store.getCount() > 0) {
-      var record = store.first();
       var value = me.getValueField();
+      var record = currencyValue
+        ? store.findRecord(value, currencyValue)
+          ? store.findRecord(value, currencyValue)
+          : store.first()
+        : store.first();
       me.triggerEl.elements[1].dom.setAttribute(
         'data-icon',
         record.data[value]
@@ -134,11 +140,11 @@ Ext.define('CurrencyField', {
       me.setCurrencyValue(record.data[value]);
     }
     if (me.isExpanded && store.getCount()) {
-      me.doAutoSelect();
+      me.doAutoSelect(record);
     }
   },
 
-  doAutoSelect: function() {
+  doAutoSelect: function(record) {
     var me = this,
       picker = me.picker,
       selectionModel,
@@ -148,7 +154,7 @@ Ext.define('CurrencyField', {
       // Highlight the last selected item and scroll it into view
       if (selectionModel.lastSelected && selectionModel.selected.length) {
         if (selectionModel.getSelection().length === 0) {
-          selectionModel.select(0);
+          selectionModel.select(record);
         }
         itemNode = selectionModel.lastSelected;
       }
@@ -195,8 +201,15 @@ Ext.define('CurrencyField', {
       // Show the picker and set isExpanded flag. alignPicker only works if isExpanded.
       picker.show();
       var selectionModel = picker.getSelectionModel();
+      var store = me.getStore();
+      var record = null;
+      if (!store.isEmptyStore && store.getCount() > 0) {
+        var value = me.getValueField();
+        var currencyValue = me.getCurrencyValue();
+        record = currencyValue ? store.findRecord(value, currencyValue) : null;
+      }
       if (selectionModel.getSelection().length === 0 || !me.hasDirtyValue) {
-        selectionModel.select(0);
+        record ? selectionModel.select(record) : selectionModel.select(0);
       }
       me.isExpanded = true;
       me.alignPicker();
@@ -357,7 +370,8 @@ Ext.define('CurrencyField', {
   onLoad: function(store, records, success) {
     var me = this;
     if (success) {
-      me.setValueOnData();
+      var value = me.getCurrencyValue();
+      me.setValueOnData(value);
     }
   },
 
