@@ -150,7 +150,7 @@ Ext.define('CurrencyField', {
       selectionModel,
       itemNode = 0;
     if (picker && me.store.getCount() > 0) {
-      selectionModel = me.picker.getSelectionModel();
+      selectionModel = picker.getSelectionModel();
       // Highlight the last selected item and scroll it into view
       if (selectionModel.lastSelected && selectionModel.selected.length) {
         if (selectionModel.getSelection().length === 0) {
@@ -209,7 +209,9 @@ Ext.define('CurrencyField', {
         record = currencyValue ? store.findRecord(value, currencyValue) : null;
       }
       if (selectionModel.getSelection().length === 0 || !me.hasDirtyValue) {
-        record ? selectionModel.select(record) : selectionModel.select(0);
+        record
+          ? selectionModel.select(record, false, true)
+          : selectionModel.select(0, false, true);
       }
       me.isExpanded = true;
       me.alignPicker();
