@@ -1,7 +1,7 @@
 Ext.define('CurrencyField', {
   extend: 'Ext.form.field.Number',
   alias: 'widget.currencyfield',
-  requires: ['Ext.util.KeyNav'],
+  requires: ['Ext.util.KeyNav', 'CurrencyKeyNav'],
   mixins: ['Ext.util.StoreHolder'],
   config: {
     displayField: 'text',
@@ -74,7 +74,7 @@ Ext.define('CurrencyField', {
     me.callParent();
     // Add handlers for keys to expand/collapse the picker
     me.keyNav = new Ext.util.KeyNav(me.inputEl, {
-      down: me.onDownArrow,
+      pageDown: me.onDownArrow,
       esc: {
         handler: me.onEsc,
         scope: me,
@@ -241,7 +241,13 @@ Ext.define('CurrencyField', {
     }
   },
 
-  onExpand: Ext.emptyFn,
+  onExpand: function() {
+    var keyNav = this.getPicker().getNavigationModel();
+    if (keyNav) {
+      keyNav.enable();
+    }
+    this.doAutoSelect();
+  },
 
   alignPicker: function() {
     if (!this.isDestroyed) {
@@ -289,7 +295,12 @@ Ext.define('CurrencyField', {
     }
   },
 
-  onCollapse: Ext.emptyFn,
+  onCollapse: function() {
+    var keyNav = this.getPicker().getNavigationModel();
+    if (keyNav) {
+      keyNav.disable();
+    }
+  },
 
   collapseIf: function(e) {
     var me = this;
@@ -345,11 +356,13 @@ Ext.define('CurrencyField', {
           pickerField: me,
           selectionModel: me.pickerSelectionModel,
           floating: true,
-          // hidden: true,
           store: me.getPickerStore(),
           displayField: me.displayField,
           preserveScrollOnRefresh: true,
           pageSize: 0,
+          navigationModel: {
+            type: 'currencyKeyNav'
+          },
           tpl: me.tpl
         },
         me.listConfig,
