@@ -14,15 +14,15 @@ Ext.define('CurrencyField', {
         handler: 'onTriggerClick',
         hideOnReadOnly: false,
         weight: -1,
-        scope: 'this'
-      }
-    }
+        scope: 'this',
+      },
+    },
   },
   defaultListConfig: {
     loadingHeight: 70,
     minWidth: 70,
     maxHeight: 300,
-    shadow: 'sides'
+    shadow: 'sides',
   },
   isPickerField: true,
   matchFieldWidth: true,
@@ -45,7 +45,7 @@ Ext.define('CurrencyField', {
             Ext.Array.from(transformSelect.options),
             function(option) {
               return [option.value, option.text];
-            }
+            },
           );
         }
         if (!me.name) {
@@ -73,15 +73,16 @@ Ext.define('CurrencyField', {
     var me = this;
     me.callParent();
     // Add handlers for keys to expand/collapse the picker
-    me.keyNav = new Ext.util.KeyNav(me.inputEl, {
+    me.keyNav = new Ext.util.KeyNav({
+      target: me.inputEl,
       pageDown: me.onDownArrow,
       esc: {
         handler: me.onEsc,
         scope: me,
-        defaultEventAction: false
+        defaultEventAction: false,
       },
       scope: me,
-      forceKeyDown: true
+      forceKeyDown: true,
     });
     // Disable native browser autocomplete
     if (Ext.isGecko) {
@@ -95,7 +96,7 @@ Ext.define('CurrencyField', {
       var value = me.getCurrencyValue();
       me.setValueOnData(value);
       var result = {
-        load: me.onLoad
+        load: me.onLoad,
       };
 
       return result;
@@ -135,7 +136,7 @@ Ext.define('CurrencyField', {
         : store.first();
       me.triggerEl.elements[1].dom.setAttribute(
         'data-icon',
-        record.data[value]
+        record.data[value],
       );
       me.setCurrencyValue(record.data[value]);
     }
@@ -226,13 +227,13 @@ Ext.define('CurrencyField', {
         touchstart: me.collapseIf,
         scope: me,
         delegated: false,
-        destroyable: true
+        destroyable: true,
       });
       // Scrolling of anything which causes this field to move should collapse
       me.scrollListeners = Ext.on({
         scroll: me.onGlobalScroll,
         scope: me,
-        destroyable: true
+        destroyable: true,
       });
       // Buffer is used to allow any layouts to complete before we align
       Ext.on('resize', me.alignPicker, me, { buffer: 1 });
@@ -361,18 +362,18 @@ Ext.define('CurrencyField', {
           preserveScrollOnRefresh: true,
           pageSize: 0,
           navigationModel: {
-            type: 'currencyKeyNav'
+            type: 'currencyKeyNav',
           },
-          tpl: me.tpl
+          tpl: me.tpl,
         },
         me.listConfig,
-        me.defaultListConfig
+        me.defaultListConfig,
       );
     picker = me.picker = Ext.widget(pickerCfg);
     picker.getSelectionModel().on({
       beforeselect: me.onBeforeSelect,
       beforedeselect: me.onBeforeDeselect,
-      scope: me
+      scope: me,
     });
     picker.getNavigationModel().navigateOnSpace = false;
     return picker;
@@ -438,6 +439,6 @@ Ext.define('CurrencyField', {
       if (!this.picker.owns(scroller.getElement())) {
         this.collapse();
       }
-    }
-  }
+    },
+  },
 });
